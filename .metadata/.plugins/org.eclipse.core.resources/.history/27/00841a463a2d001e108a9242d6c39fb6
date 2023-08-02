@@ -1,0 +1,100 @@
+package com.zoho.database;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Constructor;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+
+import com.zoho.RedisDao.CacheObject;
+import com.zoho.model.ObjectFactory;
+
+import redis.clients.jedis.Jedis;
+
+public class RedisCache {
+
+	private static RedisCache redisCache;
+	public static RedisCache getInstance() {
+		if (redisCache == null) {
+			synchronized (RedisCache.class) {
+				if (redisCache == null) {
+					redisCache = new RedisCache();
+				}
+			}
+		}
+		return redisCache;
+	}
+	public ObjectFactory getInstance(String tableName, HashMap<String, Object> map) throws Exception {
+		try {
+			Class<?> className = Class.forName("com.zoho.model." + tableName);
+			Constructor<?> construtor = className.getConstructor(HashMap.class);
+			return (ObjectFactory) construtor.newInstance(map);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	public void set(String action,String idName ,String objectString) {
+		RedisConnectionPool redisConnection = RedisConnectionPool.getInstance();
+		Jedis jedis = redisConnection.getConnection();
+		jedis.hset(action,idName, objectString);
+		
+	}
+	
+	public ObjectFactory getObject(String action,String idName,String tableName) {
+		if(idName == null) {
+			return null;
+		}
+		RedisConnectionPool redisConnection = RedisConnectionPool.getInstance();
+		Jedis jedis = redisConnection.getConnection();
+		String objectString = jedis.hget(action,idName);
+		ObjectFactory object = null;
+		try {
+			if(objectString != null) {
+				object = getInstance(tableName,ObjectFactory.stringToHashMap(objectString));
+			}
+			 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		jedis.close();
+		return object;
+		
+	}
+
+	
+	public long removeFromCache(String key,String field) {
+		RedisConnectionPool redisConnection = RedisConnectionPool.getInstance();
+		Jedis jedis = redisConnection.getConnection();
+		long status = jedis.hdel(key,field);
+		
+		jedis.close();
+		return status;
+	}
+	public String getObjectString(String string, String userId) {
+		if(userId == null) {
+			return null;
+		}
+		RedisConnectionPool redisConnection = RedisConnectionPool.getInstance();
+		Jedis jedis = redisConnection.getConnection();
+		String objectString = jedis.hget(string,userId);
+		jedis.close();
+		return objectString;
+	}
+	public void set(String userId, String idName, CacheObject cacheObj) throws IOException {
+		RedisConnectionPool redisConnection = RedisConnectionPool.getInstance();
+		Jedis jedis = redisConnection.getConnection();
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+		objectOutputStream.writeObject(cacheObj);
+		objectOutputStream.close();
+		String objectString = new String(outputStream.toByteArray(), StandardCharsets.ISO_8859_1);
+		jedis.hset(userId, idName,objectString);
+		jedis.close();
+		
+	}
+}

@@ -1,0 +1,39 @@
+package proxy;
+
+import java.lang.reflect.Proxy;
+
+import com.zoho.api.*;
+import com.zoho.api.UserRedisDao;
+
+import apiInterFace.EmailApiInterface;
+import apiInterFace.SessionManagerInterface;
+import apiInterFace.UserApiInterface;
+
+public class ProxyFactory {
+		public  static UserApiInterface getUserProxy() {
+			UserDao userDao = new UserDao();
+			UserRedisDao userRedis = new UserRedisDao();
+			ObjectInvocationHandler objectInvocation = new ObjectInvocationHandler(userRedis,userDao);
+			UserApiInterface user = (UserApiInterface) Proxy.newProxyInstance(UserApiInterface.class.getClassLoader(),new  Class[] {UserApiInterface.class}, objectInvocation);
+			return user;
+			
+		}
+		
+		public static EmailApiInterface getEmailProxy() {
+			EmailDao EmailDao = new EmailDao();
+			EmailRedisDao EmailRedis = new EmailRedisDao();
+			ObjectInvocationHandler objectInvocation = new ObjectInvocationHandler(EmailRedis,EmailDao);
+			EmailApiInterface email = (EmailApiInterface) Proxy.newProxyInstance(EmailApiInterface.class.getClassLoader(),new  Class[] {EmailApiInterface.class}, objectInvocation);
+			return email;
+		}
+		
+		public static SessionManagerInterface getSessionProxy() {
+			SessionManagerDao sessionDao = new SessionManagerDao();
+			SessionRedisDao sessionRedis = new SessionRedisDao();
+			ObjectInvocationHandler objectInvocation = new ObjectInvocationHandler(sessionRedis,sessionDao);
+			SessionManagerInterface session = (SessionManagerInterface) Proxy.newProxyInstance(SessionManagerInterface.class.getClassLoader(),new  Class[] {SessionManagerInterface.class}, objectInvocation);
+			return session;
+		}
+	
+	
+}

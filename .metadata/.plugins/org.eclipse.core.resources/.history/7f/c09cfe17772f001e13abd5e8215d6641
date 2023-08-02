@@ -1,0 +1,58 @@
+package com.zoho.RedisDao;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.zoho.api.*;
+import com.zoho.database.RedisCache;
+import com.zoho.model.Email;
+import com.zoho.model.ObjectFactory;
+
+public class EmailRedisSet extends EmailDao{
+		RedisCache cache = RedisCache.getInstance();
+		
+	private void setAllEmail(String userId,ArrayList<Email> emailList) {
+		StringBuilder emails = new StringBuilder();
+		for(Email email:emailList) {
+			 emails.append(ObjectFactory.toString(email.getMap())).append("&");
+		}
+		HashMap<String,Object> storeMap = new HashMap<String, Object>();
+		cache.set(userId,"AllEmail",emails.toString());
+	
+	}
+
+	@Override
+	public ArrayList<Email> getAllEmail(String userId) {
+		EmailDao emailDao = new EmailDao();
+		ArrayList<Email> emailList = emailDao.getAllEmail(userId);
+		setAllEmail(userId,emailList);
+		return emailList;
+	}
+	
+	@Override
+	public Email getPrimaryEmail(String userId) {
+		EmailDao emailDao = new  EmailDao();
+		Email priamaryEmailObj = emailDao.getPrimaryEmail(userId);
+	
+		return priamaryEmailObj;
+	}
+	@Override
+	public String getUserId(String EmailId) {
+		EmailDao emailDao = new EmailDao();
+		String userId = emailDao.getUserId(EmailId);
+		
+		cache.set(EmailId,"UserId",userId);
+		return userId;
+	}
+	
+	public Email getEmailObject(String userId) {
+		EmailDao emailDao = new EmailDao();
+		Email email  = emailDao.getEmailObject(userId);
+		cache.set(userId,"Object",ObjectFactory.toString(email.getMap()));
+		return email;
+		
+	}
+
+	
+}

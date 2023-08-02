@@ -1,0 +1,92 @@
+package com.zoho.RedisDao;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.zoho.database.RedisCache;
+import com.zoho.model.Email;
+import com.zoho.model.ObjectFactory;
+
+import apiInterFace.EmailApiInterface;
+
+public class EmailRedisDao implements EmailApiInterface{
+	RedisCache cache = RedisCache.getInstance();
+	@Override
+	public ArrayList<Email> getAllEmail(String userId) {
+		ArrayList<Email> emailList = new ArrayList<Email>();
+		List<ObjectFactory> verifiedList = getVerifedEmails(userId,true);
+		List<ObjectFactory> nonverifedList =getVerifedEmails(userId,false);
+		if(nonverifedList.isEmpty()&&verifiedList.isEmpty()) {
+			return null;
+		}
+		for(ObjectFactory object :verifiedList)
+			Email email;
+			try {
+				email = (Email) cache.getFromJedis(objectStr,"Object");
+				emailList.add(email);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+		}
+		if(emailList.size()>0) {
+			return emailList;
+		}
+		return null;
+	}
+
+	@Override
+	public Email getPrimaryEmail(String userId) {
+		Email email = null;
+		try {
+			email = (Email) cache.getFromJedis("PrimaryEmail"+userId);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return email;
+	}
+
+	@Override
+	public String getUserId(String EmailId) {
+		Email userId = null;
+		try {
+			userId = (Email) cache.getFromJedis(EmailId+"UserId");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return userId.getUserId();
+	}
+	
+	
+
+	@Override
+	public ArrayList<ObjectFactory> getVerifedEmails(String userId,boolean status) {
+		 List<String> emailIdList = cache.getListObject("Email"+userId+status);
+		 ArrayList<ObjectFactory> emailObjectList = new ArrayList<>();
+		 for(String emailId : emailIdList) {
+			 emailObjectList.add(getEmailObject(emailId));
+		 }
+		return emailObjectList;
+	}
+
+	@Override
+	public Email getEmailObject(String emailId) {
+		Email email = null;
+		try {
+			email = (Email) cache.getFromJedis(emailId);
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return email;
+	}
+
+
+
+}

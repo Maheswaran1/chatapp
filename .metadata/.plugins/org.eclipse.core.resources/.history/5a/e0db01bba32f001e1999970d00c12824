@@ -1,0 +1,129 @@
+package com.zoho.model;
+
+import java.util.HashMap;
+
+public class Phone extends ObjectFactory {
+	private static final long serialVersionUID = -1790066301384258053L;
+	private String phoneId;	
+	private String userId;
+	private int phoneNum;
+	private long createdTime;
+	private boolean primary;
+	private boolean verifed;
+	private long modifiedTime;
+	
+	public Phone(HashMap<String, Object> map) {
+		super(map);
+		setTableName("Phone");
+		init();
+	}
+	
+	public Phone() {
+		
+	}
+	
+	public void init() {
+		if(map.get("UserId") != null) {
+			this.userId = (String) map.get("UserId");
+		}
+		if(map.get("PhoneId") != null) {
+			this.phoneId = (String) map.get("PhoneId");
+		}
+		if(map.get("PhoneNum") != null) {
+			this.phoneNum = (int) map.get("PhoneNum");
+		}
+		
+		if(map.get("CreatedTime") != null) {
+			if(map.get("CreatedTime") instanceof String) {
+				this.createdTime = Integer.parseInt((String) map.get("CreatedTime"));
+			}else {
+				this.createdTime =(long)map.get("CreatedTime");
+			}
+		}
+		
+		if(map.get("Primary") != null) {
+			if(map.get("Primary") instanceof String) {
+				this.primary = Boolean.parseBoolean((String) map.get("Primary"));
+			}else {
+				this.primary =(boolean)map.get("PrimaryEmail");
+			}
+		}
+		
+		if(map.get("Verified") != null) {
+			if(map.get("Verifed") instanceof String) {
+				this.verifed = Boolean.parseBoolean((String)map.get("Verifed"));
+			}else {
+			this.verifed = (boolean)map.get("Verifed");
+			}
+		}
+		
+		if(map.get("modifiedTime") != null) {
+			if(map.get("ModifiedTime") instanceof String) {
+				this.modifiedTime = Integer.parseInt((String) map.get("ModifiedTime"));
+			}else {
+				this.modifiedTime =(long)map.get("ModifiedTime");
+			}
+		}
+		
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public int getPhoneNum() {
+		return phoneNum;
+	}
+	public void setPhoneNum(int phoneNum) {
+		this.phoneNum = phoneNum;
+	}
+	public long getTime() {
+		return createdTime;
+	}
+	public void setTime(long createdTime) {
+		this.createdTime = createdTime;
+	}
+	public boolean isPrimary() {
+		return primary;
+	}
+	public void setPrimary(boolean primary) {
+		this.primary = primary;
+	}
+	public boolean isVerifed() {
+		return verifed;
+	}
+	public void setVerifed(boolean verifed) {
+		this.verifed = verifed;
+	}
+	public long getModifiedTime() {
+		return modifiedTime;
+	}
+	public void setModifiedTime(long modifiedTime) {
+		this.modifiedTime = modifiedTime;
+	}
+	
+	public HashMap<String, String> getColumn(){
+		
+		
+		
+		
+		return null;
+		
+	}
+	public void setMap(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public String getPhoneId() {
+		return phoneId;
+	}
+
+	public void setPhoneId(String phoneId) {
+		this.phoneId = phoneId;
+	}
+	
+	
+	}

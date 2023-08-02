@@ -1,0 +1,5 @@
+package com.zoho.RedisDao;
+
+public class CacheObject {
+
+}

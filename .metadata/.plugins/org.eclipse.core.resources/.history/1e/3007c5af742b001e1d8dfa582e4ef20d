@@ -1,0 +1,20 @@
+package com.zoho.RedisDao;
+
+import java.util.HashMap;
+import com.zoho.database.ExcuteQuery;
+import com.zoho.database.RedisCache;
+public class ClearCacheClass extends ExcuteQuery{
+	
+	RedisCache cache = RedisCache.getInstance();
+	String [] emailDeleteKeys = {"Object","PrimaryEmail","AllEmail","UserId"};
+	String [] userDeleteKeys = {"Object"};
+	String [] sessionDeleteKeys = {"Object","UserId"};
+
+	public void clearAllCache(String tableName, HashMap<String, Object> condition) {
+		
+		String field = condition.values().toString();
+		String field1 =field.substring(1,field.length()-1);
+		String [] column = {"UserId"};
+		
+	}
+	}

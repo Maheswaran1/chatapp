@@ -1,0 +1,38 @@
+package com.zoho.RedisDao;
+
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import com.zoho.database.RedisCache;
+import com.zoho.model.ObjectFactory;
+public class ClearCacheClass{
+	
+	RedisCache cache = RedisCache.getInstance();
+	
+	public void clearAllCache(String tableName, HashMap<String, Object> condition) {
+		
+		try {
+			Class<?> className = Class.forName("com.zoho.model." + tableName);
+			Constructor<?> constructor = className.getConstructor(HashMap.class);
+		} catch (NoSuchMethodException | SecurityException |ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String field = condition.values().toString();
+		String field1 =field.substring(1,field.length()-1);
+		
+		
+		String [] column = {"UserId"};
+		
+	}
+	public ObjectFactory getInstance(String tableName, HashMap<String, Object> map) throws Exception {
+		try {
+			Class<?> className = Class.forName("com.zoho.model." + tableName);
+			Constructor<?> construtor = className.getConstructor(HashMap.class);
+			return (ObjectFactory) construtor.newInstance(map);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+
+			e.printStackTrace();
+		}
+		return null;
+	}
+	}

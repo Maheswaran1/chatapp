@@ -1,0 +1,30 @@
+package com.zoho.RedisDao;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import com.zoho.database.ExcuteQuery;
+import com.zoho.database.RedisCache;
+import com.zoho.model.ObjectFactory;
+
+public class ClearCacheClass {
+
+	RedisCache cache = RedisCache.getInstance();
+	
+	
+	public void ClearCache(ObjectFactory object) {
+		try {
+			Class<?> className = Class.forName("com.zoho.model." + object.getTableName()+"RedisDao");
+			//Method method = className.getDeclaredMethod("ClearCache"+object.getTableName(), object);
+		} catch (ClassNotFoundException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		object.getTableName();
+		//cache.removeFromCache((String) object.getMap().get("UserId"), object.getTableName());
+	}
+
+}

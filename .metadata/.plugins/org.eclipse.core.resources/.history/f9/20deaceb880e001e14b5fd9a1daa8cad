@@ -1,0 +1,106 @@
+package com.zoho.servlet;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.UUID;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
+
+import com.zoho.api.EmailApi;
+import com.zoho.api.PasswordApi;
+import com.zoho.api.SessionManagerApi;
+
+import javax.servlet.http.HttpServletRequest;
+
+@SuppressWarnings("serial")
+
+public class LoginServlet extends HttpServlet {
+
+	public static HashMap<String, Object> objectMap = new HashMap<>();
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		String email = request.getParameter("EmailId");
+		String password = request.getParameter("Password");
+		
+		
+		HashMap<String ,Object> emailMap = new HashMap<String, Object>();
+		emailMap.put("EmailId", email);
+		EmailApi emailapi = new EmailApi();
+		int userId = checkEmail(emailapi,emailMap);
+		
+		if(userId == 0) {
+			response.sendRedirect("login.jsp");
+			System.out.println("Enter valid EmailId");
+		}else {
+		PasswordApi passwordApi = new PasswordApi();	
+		HashMap<String ,Object> passwordMap = new HashMap<String, Object>();
+		passwordMap.put("UserId", userId);
+		boolean authentication = authenticateUser(passwordApi,passwordMap,password);
+		
+		
+		
+		SessionManagerApi session = new SessionManagerApi();
+		HashMap<String, Object> sessionMap =new HashMap<String, Object>();
+		
+		String sessionId = generatedSessionId() ;
+		sessionMap.put("Sessionid", sessionId);
+		sessionMap.put("UserId", userId);
+		session.InsertSession(sessionMap);
+		
+		try {
+		 sessionId = session.getSessionId(userId);
+		 System.out.println(sessionId+"sesssionId");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		if(authentication) { 
+			Cookie user = new Cookie("sessionId",sessionId);
+			user.setMaxAge(10*6);
+			response.addCookie(user);
+			
+			response.sendRedirect("LoginSuccess.jsp");
+		}else {
+			response.sendRedirect("login.jsp");
+		}
+	}
+		
+	}
+	
+	
+	
+	private String generatedSessionId() {
+		return String.valueOf(System.currentTimeMillis()).substring(8,13)+UUID.randomUUID().toString().substring(1,10);
+	}
+
+
+
+	public int checkEmail(EmailApi emailApi,HashMap<String,Object> emailMap) {
+		try {
+			int userId = emailApi.checkEmail(emailMap);
+			return userId;
+		}catch(Exception e) {
+			e.printStackTrace();
+			System.out.println("Please Enter valid EmailId");
+		}
+		return 0;
+	}
+	
+	public boolean  authenticateUser(PasswordApi passwordApi,HashMap<String, Object> condition, String password) {
+		try {
+			boolean check =passwordApi.authanticateUser(password, condition);
+			return check;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+		
+	}
+}

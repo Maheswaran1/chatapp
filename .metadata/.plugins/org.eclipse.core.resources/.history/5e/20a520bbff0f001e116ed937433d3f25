@@ -1,0 +1,15 @@
+package com.zoho.api;
+
+import java.util.HashMap;
+
+import com.zoho.database.ExcuteQuery;
+import com.zoho.model.Audit;
+
+public class AuditApi {
+	
+	public void insert(HashMap<String,Object> auditMap) {
+		Audit audit = new Audit(auditMap);
+		ExcuteQuery object = new ExcuteQuery();
+		int status = object.insert(audit);
+	}
+}

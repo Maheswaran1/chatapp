@@ -1,0 +1,48 @@
+package com.zoho.RedisDao;
+
+import java.util.ArrayList;
+
+public class CacheObject {
+	
+	private ArrayList<Object> objectList;
+	
+	private Object primaryEmail;
+	
+	private Object object;
+	
+	private String userId;
+
+	public ArrayList<Object> getObjectList() {
+		return objectList;
+	}
+
+	public void setObjectList(ArrayList<Object> objectList) {
+		this.objectList = objectList;
+	}
+
+	public Object getPrimaryEmail() {
+		return primaryEmail;
+	}
+
+	public void setPrimaryEmail(Object primaryEmail) {
+		this.primaryEmail = primaryEmail;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public Object getObject() {
+		return object;
+	}
+
+	public void setObject(Object object) {
+		this.object = object;
+	}
+	
+
+}

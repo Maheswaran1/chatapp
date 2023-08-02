@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SignUp Here</title>
+<link rel="stylesheet" type="text/css" href="../css/signup.css">
+
+</head>
+<body>
+	<div>
+	<form action="SignUp" method= "POST">
+	<div class = "inputbox">
+		<label>Email</label>
+		<input type= "email"  name ="EmailId" required>
+			
+	</div>
+	<div class = "inputbox">
+		<label>Password</label>
+		<input type ="password"  name ="Password" required>
+			
+	</div>
+	<div class = phoneNumber>
+		<label>PhoneNumber</label>
+		<input type="tel" name ="PhoneNumber" id="phoneNum">
+		
+	</div>
+	<div class = "name">
+		<label>FisrtName</label>
+			<input type= "text" name ="FirstName" required></br>
+			
+		<label>LastName</label>
+			<input type ="text" name = "LastName" required>
+	</div>
+	<div class = "gender">
+		<label>Gender</label>
+		<input type="radio" name = "Gender" id ="male" value ="Male">Male
+			<input type="radio" name = "Gender" id ="female" value ="Female">Female
+			<input type = "radio" name = "Gender" id="other" value="Other">Other
+	</div>
+	<div class ="dateOfBirth">
+		<label>Date of Birth</label>
+		<input type ="date" name = DateOfBirth id="DateOfBirth">
+			</div>
+	<div> 
+	<input type="submit">
+	</div>
+	</form>
+	</div>
+</body>
+</html>

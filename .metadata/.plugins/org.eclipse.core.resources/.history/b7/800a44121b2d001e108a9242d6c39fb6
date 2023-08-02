@@ -1,0 +1,36 @@
+package com.zoho.cacheobject;
+
+import java.util.ArrayList;
+
+public class EmailCache {
+	private ArrayList<String> allEmail;
+	private String Object;
+	private String UserId;
+	private String primaryEmail;
+	public ArrayList<String> getAllEmail() {
+		return allEmail;
+	}
+	public void setAllEmail(ArrayList<String> allEmail) {
+		this.allEmail = allEmail;
+	}
+	public String getObject() {
+		return Object;
+	}
+	public void setObject(String object) {
+		Object = object;
+	}
+	public String getUserId() {
+		return UserId;
+	}
+	public void setUserId(String userId) {
+		UserId = userId;
+	}
+	public String getPrimaryEmail() {
+		return primaryEmail;
+	}
+	public void setPrimaryEmail(String primaryEmail) {
+		this.primaryEmail = primaryEmail;
+	}
+	
+
+}

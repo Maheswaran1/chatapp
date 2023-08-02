@@ -1,0 +1,150 @@
+package com.zoho.model;
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+
+public class User extends ObjectFactory {
+	
+	
+	private String userId;
+	private String firstName;
+	private String lastName;
+	private String gender;
+	private String dateOfBirth;
+	private long createdDate;
+	private long modifiedTime;
+	private int spam;
+	private ArrayList <Email> emailList;
+
+	public User(HashMap<String, Object> map) {	
+		super(map);
+		setTableName("User");
+
+		init();
+	}
+
+
+
+	private void init() {
+		if(map.get("UserId") != null) {
+			this.userId = (String) map.get("UserId");
+
+		}
+		
+		if(map.get("FirstName") != null) {
+			this.firstName = (String) map.get("FirstName");
+		}
+		
+		if(map.get("LastName") != null) {
+			this.lastName = (String) map.get("LastName");
+		}
+		
+		if(map.get("Gender") != null) {
+			this.gender = (String) map.get("Gender");
+		}
+		
+		if(map.get("DateOfBirth") != null) {
+			this.dateOfBirth = (String) map.get("DateOfBirth");
+		}
+		
+		if(map.get("CreatedDate") != null) {
+			if(map.get("CreatedDate") instanceof String) {
+				this.createdDate = Long.parseLong((String) map.get("CreatedDate"));
+			}else {
+				this.createdDate = (long) map.get("CreatedDate");
+			}
+		}
+		
+		if(map.get("ModifiedTime") != null) {
+			if(map.get("ModifiedTime") instanceof String) {
+				this.modifiedTime = Long.parseLong((String) map.get("ModifiedTime"));
+			}else {
+				this.modifiedTime = (long) map.get("ModifiedTime");
+			}
+		}
+		
+		if(map.get("Status") != null) {
+			if(map.get("Status") instanceof String) {
+				this.spam = Integer.parseInt((String) map.get("Status"));
+			}else {
+				this.spam = (int) map.get("Status");
+			}
+		}
+		
+	}
+
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public long getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(long createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public long getModifiedTime() {
+		return modifiedTime;
+	}
+
+	public void setModifiedTime(long modifiedTime) {
+		this.modifiedTime = modifiedTime;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	public String getGender() {
+		return gender;
+	}
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+	public String getDateOfBirth() {
+		return dateOfBirth;
+	}
+	public void setDateOfBirth(String date) {
+		this.dateOfBirth = date;
+	}
+
+
+	public int getSpam() {
+		return spam;
+	}
+
+
+	public void setSpam(int spam) {
+		this.spam = spam;
+	}
+
+
+	public ArrayList <Email> getEmailList() {
+		return emailList;
+	}
+
+
+	
+
+	public void setEmailList(ArrayList<Email> allEmail) {
+		this.emailList = allEmail;
+	}
+
+}

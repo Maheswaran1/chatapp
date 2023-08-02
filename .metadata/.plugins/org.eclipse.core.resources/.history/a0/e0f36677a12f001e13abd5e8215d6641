@@ -1,0 +1,39 @@
+package com.zoho.RedisDao;
+
+import java.io.IOException;
+import java.util.HashMap;
+
+import com.zoho.database.RedisCache;
+import com.zoho.model.User;
+
+import apiInterFace.UserApiInterface;
+
+public class UserRedisDao implements UserApiInterface {
+
+	@Override
+	public User getUser(String userId) {
+		RedisCache userCache = RedisCache.getInstance();
+		String tableName = "User";
+	try {
+		return (User) userCache.getObject(userId,"Object", tableName);
+	} catch (ClassNotFoundException | IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return null;
+	}
+
+	@Override
+	public int getSpam(String userId) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public long updateProfile(String userId, HashMap<String, Object> map) {
+		RedisCache cache = RedisCache.getInstance();
+		long  status = cache.removeFromCache("User",userId);
+		return status;
+	}
+
+}

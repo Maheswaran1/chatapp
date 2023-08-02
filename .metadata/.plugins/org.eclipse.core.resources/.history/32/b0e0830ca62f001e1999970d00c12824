@@ -1,0 +1,75 @@
+package com.zoho.RedisDao;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import com.zoho.api.*;
+import com.zoho.database.RedisCache;
+import com.zoho.model.Email;
+import com.zoho.model.ObjectFactory;
+
+public class EmailRedisSet extends EmailDao {
+	RedisCache cache = RedisCache.getInstance();
+
+	private void setAllEmail(String userId, ArrayList<Email> emailList) {
+		for (Email email : emailList) {
+			String primary = null ;
+			if(email.isPrimaryEmail()) {
+				primary = String.valueOf(email.isPrimaryEmail());
+			}
+			String verified = String.valueOf(email.isVerifed());
+			try {
+				cache.set(primary+"Email" + userId+verified, email.getEmailId());
+				System.out.println(primary+"Email" + userId+verified);
+				cache.set(email.getEmailId(), "Object", email);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	public ArrayList<Email> getAllEmail(String userId) {
+		EmailDao emailDao = new EmailDao();
+		ArrayList<Email> emailList = emailDao.getAllEmail(userId);
+		setAllEmail(userId, emailList);
+		return emailList;
+	}
+
+	@Override
+	public Email getPrimaryEmail(String userId) {
+		EmailDao emailDao = new EmailDao();
+		Email priamaryEmailObj = emailDao.getPrimaryEmail(userId);
+		cache.set("true"+"Email"+userId+"true", userId);
+		return priamaryEmailObj;
+	}
+
+	@Override
+	public String getUserId(String EmailId) {
+		EmailDao emailDao = new EmailDao();
+		String userId = emailDao.getUserId(EmailId);
+
+		try {
+			cache.set(EmailId, "UserId", userId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return userId;
+	}
+
+	public Email getEmailObject(String userId) {
+		EmailDao emailDao = new EmailDao();
+		Email email = emailDao.getEmailObject(userId);
+		try {
+			cache.set(userId, "Object", ObjectFactory.toString(email.getMap()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return email;
+
+	}
+
+}

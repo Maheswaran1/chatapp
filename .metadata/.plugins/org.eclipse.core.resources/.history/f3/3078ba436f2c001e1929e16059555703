@@ -1,0 +1,48 @@
+package com.zoho.RedisDao;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.zoho.database.ExcuteQuery;
+import com.zoho.database.RedisCache;
+import com.zoho.model.ObjectFactory;
+
+public class ClearCacheClass {
+
+	RedisCache cache = RedisCache.getInstance();
+
+	public void clearAllCache(String tableName, HashMap<String, Object> condition) {
+		if (condition.get("UserId") == null) {
+			String[] column = {"UserId"};
+			ExcuteQuery queryObject = new ExcuteQuery();
+			ObjectFactory object = null;
+			try {
+				object = queryObject.select(tableName, column, condition);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			ArrayList<String> key = object.getColumnList();
+			HashMap<String, Object> keyMap = object.getMap();
+			String userId = (String) keyMap.get("UserId");
+			for (String str : key) {
+				cache.removeFromCache(tableName, str + userId);
+			}
+		} else {
+			try {
+				Class<?> className = Class.forName("com.zoho.model." + tableName);
+				Constructor<?> construtor = className.getConstructor(HashMap.class);
+				ObjectFactory object = (ObjectFactory) construtor.newInstance(condition);
+				ArrayList<String> key = object.getColumnList();
+				cache.removeFromCache(tableName, (String) condition.get("UserId"));
+
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
+
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+}

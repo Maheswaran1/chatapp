@@ -1,0 +1,10 @@
+package com.zoho.api;
+
+import java.util.HashMap;
+
+public class AuditApi {
+	
+	public void insert(HashMap<String,Object> auditMap) {
+		
+	}
+}

@@ -1,0 +1,253 @@
+package com.zoho.api;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.zoho.database.ExcuteQuery;
+import com.zoho.model.Email;
+import com.zoho.model.ObjectFactory;
+import com.zoho.utility.Utility;
+import apiInterFace.EmailInterface;
+
+public class EmailDao implements EmailInterface{	
+		private static final String tableName = "Email";
+		public  String getTableName() {
+			return tableName;
+		}
+
+		private static final String [] column = {"UserId","EmailId"};
+
+
+	public Email select(HashMap<String, Object> condition) throws Exception {
+		ExcuteQuery obj = new ExcuteQuery();
+		Email email = new Email();
+		email = (Email) obj.select(tableName,column, condition);
+		return email;
+	}    
+	
+	public Email select(String [] column,HashMap<String, Object> condition) throws Exception {
+		ExcuteQuery obj = new ExcuteQuery();
+		Email email = new Email();
+		email = (Email) obj.select(tableName,column, condition);
+		return email;
+	}
+	
+	public int insert(HashMap<String, Object> map) throws Exception {
+		Email email = getObject(map);
+		
+		ExcuteQuery object = new ExcuteQuery();
+		
+		int status = object.insert(email);
+
+		return status;
+	}
+
+	
+	public int update(HashMap<String,Object> updateValues,HashMap<String, Object> condition) throws Exception {
+		ExcuteQuery obj = new ExcuteQuery();
+		int status= obj.update(tableName, updateValues,condition);
+		
+		return status;
+	}
+
+	
+	public long delete(String emailId) {
+		HashMap<String,Object> emailMap= new HashMap<>();
+		emailMap.put("EmailId", emailId);
+		ExcuteQuery queryObject = new ExcuteQuery();
+		
+		try {
+			queryObject.delete(tableName, emailMap);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return 0;
+	}
+
+	public String checkEmail(String emailId) throws Exception{
+		
+			HashMap<String,Object> condition = new HashMap<String, Object>();
+			condition.put("EmailId", emailId);
+			Email email = select(condition);
+			String userId = email.getUserId();
+		
+			return userId;
+		
+	}
+
+	public Email getObject(HashMap<String, Object> emailMap) {
+		Utility utility = new Utility();
+		IdGeneratorApi idGenerator = IdGeneratorApi.getInstance();
+		emailMap.put("Emailkey", idGenerator.getEmailKey());
+		emailMap.put("CreatedTime", utility.getCurrentTime());
+		emailMap.put("ModifiedTime",utility.getCurrentTime());
+		Email email = new Email(emailMap);
+		return email;
+		
+	}
+	
+	public long  addEmail(String email, String userId,boolean primaryEmail,boolean verified) {
+		HashMap<String,Object> emailMap = new HashMap<>();
+			emailMap.put("EmailId", email);
+			emailMap.put("UserId", userId);
+			emailMap.put("PrimaryEmail", primaryEmail);
+			emailMap.put("Verified", verified);
+			long status = 0;
+		try {
+			status = insert(emailMap);
+			if(status != 0) {
+				System.out.println("emailAdded");
+			}
+		} catch (Exception e) {
+		
+			e.printStackTrace();
+		}
+		return status;
+	}
+	
+	public ArrayList<Email> getAllEmail(String userId) {
+		ArrayList<ObjectFactory> emailObjectList = new ArrayList<>();
+		ArrayList<Email> emailList = new ArrayList<>();
+		ExcuteQuery excuteQuery = new ExcuteQuery();
+		String[] column = {"*"};
+		
+		HashMap<String,Object> condition = new HashMap<String,Object>();
+		condition.put("UserId", userId);
+		try{
+			emailObjectList = excuteQuery.selectMultiple(tableName,column,condition);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		for(int i =0;i<emailObjectList.size();i++) {
+			Email email = (Email) emailObjectList.get(i);
+			
+			emailList.add(email);
+		}
+		return emailList;
+	}
+
+	@Override
+	public Email getPrimaryEmail(String userId) {
+		HashMap<String,Object> condition = new HashMap<String,Object>();
+		HashMap<String,Object> condition1 = new HashMap<String,Object>();
+		HashMap<String,Object> condition2 = new HashMap<String,Object>();
+		condition1.put("UserId",userId);
+		condition2.put("PrimaryEmail", true);
+		condition.put("AND", condition1);
+		condition.put("", condition2);
+		String [] column = {"EmailId"};
+		
+		try {
+			Email email = select(column,condition);
+			return email;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public ArrayList<ObjectFactory> getVerifedEmails(String userId,boolean status) {
+		HashMap<String,Object> condition = new HashMap<String,Object>();
+		HashMap<String,Object> condition1 = new HashMap<String,Object>();
+		HashMap<String,Object> condition2 = new HashMap<String,Object>();
+		condition1.put("UserId",userId);
+		condition2.put("Verified", status);
+		condition.put("AND", condition1);
+		condition.put("", condition2);
+		String [] column = {"*"};
+		
+		try {
+			ExcuteQuery queryObject = new ExcuteQuery();
+			ArrayList<ObjectFactory> emailList =queryObject.selectMultiple(tableName, column, condition2);
+			return emailList;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public String getUserId(String emailId) {
+		HashMap<String,Object> condition = new HashMap<String, Object>();
+		condition.put("EmailId", emailId);
+		try {
+			Email email = select(condition);
+			return email.getUserId();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+	@Override
+	public long removeprimaryEmail() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public long checkExistingEmail(String emailId,String userId) {
+		EmailDao emailDao = new EmailDao();
+		try {
+			String userIdOrignal = emailDao.checkEmail(emailId);
+			if(userIdOrignal == null||userIdOrignal =="") {
+				return 0;
+			}else {
+				return Long.parseLong(userIdOrignal);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	@Override
+	public long setPrimaryEmail(String emailId,String userId) {
+		HashMap<String,Object> condition= new HashMap<>();
+		HashMap<String,Object> updateMap= new HashMap<>();
+		condition.put("UserId", userId);
+		updateMap.put("PrimaryEmail",false);
+		try {
+			update(updateMap,condition);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		condition.clear();
+		condition.put("EmailId", emailId);
+		
+		updateMap.put("PrimaryEmail", true);
+		try {
+			update(updateMap,condition);
+		} catch (Exception e) {
+			// TODO Auto-generated catch blocEmailEdit.jspEmailEdit.jspk
+			e.printStackTrace();
+		}		return 0;
+	}
+
+	public Email getEmailObject(String userId) {
+		HashMap<String,Object > condition = new HashMap<String, Object>();
+	condition.put("UserId", userId);
+		Email email = null;
+		try {
+			email = select(condition);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return email;
+	}
+	
+
+
+
+}
